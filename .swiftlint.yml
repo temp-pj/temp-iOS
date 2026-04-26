@@ -1,0 +1,21 @@
+opt_in_rules:
+  - empty_count
+  - closure_spacing
+  - force_unwrapping
+
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+
+excluded:
+  - Tuist
+  - Derived
+  - Project.swift
+
+line_length:
+  warning: 120
+  error: 150
+
+type_body_length:
+  warning: 300
+  error: 500
