@@ -1,0 +1,19 @@
+default_platform(:ios)
+
+platform :ios do
+
+  desc "CI: 린트 + 빌드"
+  lane :ci do
+    sh("cd .. && swiftlint lint --strict")
+    sh("cd .. && tuist generate --no-open")
+    sh(
+      "cd .. && xcodebuild " \
+      "-workspace M_GAME.xcworkspace " \
+      "-scheme M_GAME " \
+      "-destination 'platform=iOS Simulator,name=iPhone 16' " \
+      "-skipPackagePluginValidation " \
+      "clean build | xcpretty"
+    )
+  end
+
+end
