@@ -11,10 +11,12 @@ excluded:
   - Tuist
   - Derived
   - Project.swift
-
-line_length:
-  warning: 120
-  error: 150
+  - vendor
+  - vendor/bundle
+  - Pods
+  - Carthage
+  - .build
+  - DerivedData
 
 type_body_length:
   warning: 300
