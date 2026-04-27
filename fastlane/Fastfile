@@ -5,6 +5,7 @@ platform :ios do
   desc "CI: 린트 + 빌드"
   lane :ci do
     sh("cd .. && swiftlint lint --strict")
+    sh("cd .. && tuist install")
     sh("cd .. && tuist generate --no-open")
     sh(
       "cd .. && xcodebuild " \
