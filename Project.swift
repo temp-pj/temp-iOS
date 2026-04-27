@@ -14,8 +14,32 @@ let project = Project(
                     destinations: .iOS,
                     product: .framework,
                     bundleId: "io.tuist.MGAME.ClientAuth",
-                    sources: ["Clients/AuthClient/Sources/**"],
+                    sources: ["Clients/AuthClient/Interface/Sources/**"],
                     dependencies: [
+                        .target(name: "Models"),
+                        .external(name: "ComposableArchitecture")
+                    ]
+                   ),
+        
+            .target(name: "ClientAuthLive",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.ClientAuthLive",
+                    sources: ["Clients/AuthClient/Live/Sources/**"],
+                    dependencies: [
+                        .target(name: "ClientAuth"),
+                        .target(name: "Models"),
+                        .external(name: "ComposableArchitecture")
+                    ]
+                   ),
+        
+            .target(name: "ClientAuthTest",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.ClientAuthTest",
+                    sources: ["Clients/AuthClient/Test/Sources/**"],
+                    dependencies: [
+                        .target(name: "ClientAuth"),
                         .target(name: "Models"),
                         .external(name: "ComposableArchitecture")
                     ]
