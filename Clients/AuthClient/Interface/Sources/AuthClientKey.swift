@@ -5,23 +5,21 @@
 //  Created by 송지혁 on 4/27/26.
 //
 
-import ComposableArchitecture
+import Dependencies
 
-private enum AuthClientKey: DependencyKey {
-    static let liveValue = AuthClient(
-        login: { _ in
-            fatalError("AuthClient.liveValue is not configured")
-        },
-        logout: {
-            fatalError("AuthClient.liveValue is not configured")
-        }
-    )
+extension AuthClient: DependencyKey {
+    public static let liveValue = AuthClient(login: unimplemented("AuthClient.login"),
+                                             logout: unimplemented("AuthClient.logout"))
+    
+    public static let testValue = AuthClient(login: unimplemented("AuthClient.login"),
+                                             logout: unimplemented("AuthClient.logout"))
+
 }
 
 
-public extension DependencyValues {
-    var authClient: AuthClient {
-        get { self[AuthClientKey.self] }
-        set { self[AuthClientKey.self] = newValue }
+extension DependencyValues {
+    public var authClient: AuthClient {
+        get { self[AuthClient.self] }
+        set { self[AuthClient.self] = newValue }
     }
 }
