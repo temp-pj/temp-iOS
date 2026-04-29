@@ -7,7 +7,7 @@
 import ClientAuth
 
 public extension AuthClient {
-    static let live = AuthClient { credentials in
+    static let live = AuthClient { _ in
         fatalError("login live implementation is not implemented yet")
     } logout: {
         fatalError("logout live implementation is not implemented yet")

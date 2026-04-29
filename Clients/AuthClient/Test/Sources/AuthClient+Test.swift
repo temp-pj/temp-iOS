@@ -9,7 +9,7 @@ import ClientAuth
 import Models
 
 public extension AuthClient {
-    static let mockSuccess = AuthClient { credentials in
+    static let mockSuccess = AuthClient { _ in
         AuthSession()
     } logout: {
         

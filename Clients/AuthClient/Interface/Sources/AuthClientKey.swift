@@ -16,7 +16,6 @@ extension AuthClient: DependencyKey {
 
 }
 
-
 extension DependencyValues {
     public var authClient: AuthClient {
         get { self[AuthClient.self] }
