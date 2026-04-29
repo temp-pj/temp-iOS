@@ -153,7 +153,6 @@ let project = Project(
                 .target(name: "FeatureLobby"),
                 .target(name: "FeatureGame"),
                 .target(name: "ClientAuthLive"),
-                .target(name: "ClientAuthTest"),
                 .external(name: "ComposableArchitecture")
             ]
         ),
