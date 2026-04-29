@@ -13,6 +13,6 @@ struct ContentView: View {
 #Preview {
     ContentView(store: Store(initialState: AppFeature.State(),
                              reducer: { AppFeature() },
-                             withDependencies: { $0.authClient = .mockSuccess })
+                             withDependencies: { $0.authClient = .live })
     )
 }
