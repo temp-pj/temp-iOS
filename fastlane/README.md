@@ -21,7 +21,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios ci
 ```
 
-CI: 빌드
+CI: 린트 + 빌드
 
 ----
 
