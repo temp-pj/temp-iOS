@@ -50,8 +50,36 @@ let project = Project(
                 destinations: .iOS,
                 product: .framework,
                 bundleId: "io.tuist.MGAME.ClientRoom",
-                sources: ["Clients/RoomClient/Sources/**"],
-                dependencies: [.target(name: "Models"), .external(name: "ComposableArchitecture")]
+                sources: ["Clients/RoomClient/Interface/Sources/**"],
+                dependencies: [
+                    .target(name: "Models"),
+                    .external(name: "ComposableArchitecture")
+                ]
+            ),
+        
+            .target(name: "ClientRoomLive",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.ClientRoomLive",
+                    sources: ["Clients/RoomClient/Live/Sources/**"],
+                    dependencies: [
+                        .target(name: "ClientRoom"),
+                        .target(name: "Models"),
+                        .external(name: "ComposableArchitecture")
+                    ]
+                   ),
+        
+            .target(
+                name: "ClientRoomTest",
+                destinations: .iOS,
+                product: .framework,
+                bundleId: "io.tuist.MGAME.ClientRoomTest",
+                sources: ["Clients/RoomClient/Test/Sources/**"],
+                dependencies: [
+                    .target(name: "ClientRoom"),
+                    .target(name: "Models"),
+                    .external(name: "ComposableArchitecture")
+                ]
             ),
         
             .target(
@@ -153,6 +181,7 @@ let project = Project(
                 .target(name: "FeatureLobby"),
                 .target(name: "FeatureGame"),
                 .target(name: "ClientAuthLive"),
+                .target(name: "ClientRoomLive"),
                 .external(name: "ComposableArchitecture")
             ]
         ),
