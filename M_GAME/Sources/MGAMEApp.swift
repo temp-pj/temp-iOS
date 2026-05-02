@@ -1,4 +1,5 @@
 import ClientAuthLive
+import ClientMusicLive
 import ClientRoomLive
 import ComposableArchitecture
 import SwiftUI
@@ -9,7 +10,9 @@ struct MGAMEApp: App {
         AppFeature()
     } withDependencies: {
         $0.authClient = .live
+        $0.musicClient = .live
         $0.roomClient = .live
+        
     }
     
     var body: some Scene {
