@@ -197,8 +197,37 @@ let project = Project(
                 destinations: .iOS,
                 product: .framework,
                 bundleId: "io.tuist.MGAME.ClientAudio",
-                sources: ["Clients/AudioClient/Sources/**"],
-                dependencies: []
+                sources: ["Clients/AudioClient/Interface/Sources/**"],
+                dependencies: [
+                    .target(name: "Models"),
+                    .external(name: "ComposableArchitecture")
+                ]
+            ),
+        
+            .target(
+                name: "ClientAudioLive",
+                destinations: .iOS,
+                product: .framework,
+                bundleId: "io.tuist.MGAME.ClientAudioLive",
+                sources: ["Clients/AudioClient/Live/Sources/**"],
+                dependencies: [
+                    .target(name: "Models"),
+                    .target(name: "ClientAudio"),
+                    .external(name: "ComposableArchitecture")
+                ]
+            ),
+        
+            .target(
+                name: "ClientAudioTest",
+                destinations: .iOS,
+                product: .framework,
+                bundleId: "io.tuist.MGAME.ClientAudioTest",
+                sources: ["Clients/AudioClient/Test/Sources/**"],
+                dependencies: [
+                    .target(name: "Models"),
+                    .target(name: "ClientAudio"),
+                    .external(name: "ComposableArchitecture")
+                ]
             ),
         
             .target(
@@ -272,6 +301,7 @@ let project = Project(
                 .target(name: "FeatureLogin"),
                 .target(name: "FeatureLobby"),
                 .target(name: "FeatureGame"),
+                .target(name: "ClientAudioLive"),
                 .target(name: "ClientAuthLive"),
                 .target(name: "ClientRoomLive"),
                 .target(name: "ClientMusicLive"),
