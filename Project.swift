@@ -96,9 +96,35 @@ let project = Project(
                 destinations: .iOS,
                 product: .framework,
                 bundleId: "io.tuist.MGAME.ClientMusic",
-                sources: ["Clients/MusicClient/Sources/**"],
-                dependencies: [.target(name: "Models"), .external(name: "ComposableArchitecture")]
+                sources: ["Clients/MusicClient/Interface/Sources/**"],
+                dependencies: [
+                    .target(name: "Models"),
+                    .external(name: "ComposableArchitecture")
+                ]
             ),
+        
+            .target(name: "ClientMusicLive",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.ClientMusicLive",
+                    sources: ["Clients/MusicClient/Live/Sources/**"],
+                    dependencies: [
+                        .target(name: "Models"),
+                        .target(name: "ClientMusic"),
+                        .external(name: "ComposableArchitecture")
+                    ]),
+        
+            .target(name: "ClientMusicTest",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.ClientMusicTest",
+                    sources: ["Clients/MusicClient/Test/Sources/**"],
+                    dependencies: [
+                        .target(name: "Models"),
+                        .target(name: "ClientMusic"),
+                        .external(name: "ComposableArchitecture")
+                    ]
+                   ),
         
             .target(
                 name: "ClientAudio",
@@ -182,6 +208,7 @@ let project = Project(
                 .target(name: "FeatureGame"),
                 .target(name: "ClientAuthLive"),
                 .target(name: "ClientRoomLive"),
+                .target(name: "ClientMusicLive"),
                 .external(name: "ComposableArchitecture")
             ]
         ),
