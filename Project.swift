@@ -83,13 +83,79 @@ let project = Project(
             ),
         
             .target(
-                name: "ClientWebSocket",
+                name: "ClientGame",
                 destinations: .iOS,
                 product: .framework,
-                bundleId: "io.tuist.MGAME.ClientWebSocket",
-                sources: ["Clients/WebSocketClient/Sources/**"],
-                dependencies: [.target(name: "Models"), .external(name: "ComposableArchitecture")]
+                bundleId: "io.tuist.MGAME.ClientGame",
+                sources: ["Clients/GameClient/Interface/Sources/**"],
+                dependencies: [
+                    .target(name: "Models"),
+                    .external(name: "ComposableArchitecture")
+                ]
             ),
+        
+            .target(name: "ClientGameLive",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.ClientGameLive",
+                    sources: ["Clients/GameClient/Live/Sources/**"],
+                    dependencies: [
+                        .target(name: "Models"),
+                        .target(name: "ClientGame"),
+                        .target(name: "ClientWebSocket"),
+                        .external(name: "ComposableArchitecture")
+                    ]
+                   ),
+        
+            .target(name: "ClientGameTest",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.ClientGameTest",
+                    sources: ["Clients/GameClient/Test/Sources/**"],
+                    dependencies: [
+                        .target(name: "Models"),
+                        .target(name: "ClientGame"),
+                        .external(name: "ComposableArchitecture")
+                    ]
+                   ),
+        
+            .target(name: "ClientWebSocket",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.ClientWebSocket",
+                    sources: ["Clients/WebSocketClient/Interface/Sources/**"],
+                    dependencies: [
+                        .target(name: "Models"),
+                        .external(name: "ComposableArchitecture")
+                    ]
+                   ),
+        
+        
+            .target(name: "ClientWebSocketLive",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.ClientWebSocketLive",
+                    sources: ["Clients/WebSocketClient/Live/Sources/**"],
+                    dependencies: [
+                        .target(name: "Models"),
+                        .target(name: "ClientWebSocket"),
+                        .external(name: "ComposableArchitecture")
+                    ]
+                   ),
+        
+            .target(name: "ClientWebSocketTest",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.ClientWebSocketTest",
+                    sources: ["Clients/WebSocketClient/Test/Sources/**"],
+                    dependencies: [
+                        .target(name: "Models"),
+                        .target(name: "ClientWebSocket"),
+                        .external(name: "ComposableArchitecture")
+                    ]
+                   ),
+        
+        
         
             .target(
                 name: "ClientMusic",
@@ -172,7 +238,7 @@ let project = Project(
             dependencies: [
                 .target(name: "MDS"),
                 .target(name: "Models"),
-                .target(name: "ClientWebSocket"),
+                .target(name: "ClientGame"),
                 .target(name: "ClientMusic"),
                 .target(name: "ClientAudio"),
                 .external(name: "ComposableArchitecture")
@@ -209,6 +275,7 @@ let project = Project(
                 .target(name: "ClientAuthLive"),
                 .target(name: "ClientRoomLive"),
                 .target(name: "ClientMusicLive"),
+                .target(name: "ClientGameLive"),
                 .external(name: "ComposableArchitecture")
             ]
         ),
