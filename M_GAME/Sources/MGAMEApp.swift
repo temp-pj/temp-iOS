@@ -1,4 +1,5 @@
 import ClientAuthLive
+import ClientGameLive
 import ClientMusicLive
 import ClientRoomLive
 import ComposableArchitecture
@@ -12,7 +13,7 @@ struct MGAMEApp: App {
         $0.authClient = .live
         $0.musicClient = .live
         $0.roomClient = .live
-        
+        $0.gameClient = .live
     }
     
     var body: some Scene {
