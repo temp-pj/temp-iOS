@@ -1,3 +1,4 @@
+import ClientAudioLive
 import ClientAuthLive
 import ClientGameLive
 import ClientMusicLive
@@ -14,6 +15,7 @@ struct MGAMEApp: App {
         $0.musicClient = .live
         $0.roomClient = .live
         $0.gameClient = .live
+        $0.audioClient = .live
     }
     
     var body: some Scene {
