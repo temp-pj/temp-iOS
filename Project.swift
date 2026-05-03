@@ -258,56 +258,69 @@ let project = Project(
             ]
         ),
         
-        .target(
-            name: "FeatureGame",
-            destinations: .iOS,
-            product: .framework,
-            bundleId: "io.tuist.MGAME.FeatureGame",
-            sources: ["Features/Game/Sources/**"],
-            dependencies: [
-                .target(name: "MDS"),
-                .target(name: "Models"),
-                .target(name: "ClientGame"),
-                .target(name: "ClientMusic"),
-                .target(name: "ClientAudio"),
-                .external(name: "ComposableArchitecture")
-            ]
-        ),
-        
-        .target(name: "MDS",
+            .target(
+                name: "FeatureGame",
                 destinations: .iOS,
                 product: .framework,
-                bundleId: "io.tuist.MGAME.MDS",
-                sources: ["Shared/MDS/Sources/**"],
-                resources: ["Shared/MDS/Resources/**"]
-               ),
-        
-        .target(
-            name: "M_GAME",
-            destinations: .iOS,
-            product: .app,
-            bundleId: "io.tuist.M-GAME",
-            infoPlist: .extendingDefault(
-                with: [
-                    "UILaunchScreen": [
-                        "UIColorName": "",
-                        "UIImageName": "",
-                    ],
+                bundleId: "io.tuist.MGAME.FeatureGame",
+                sources: ["Features/Game/Sources/**"],
+                dependencies: [
+                    .target(name: "MDS"),
+                    .target(name: "Models"),
+                    .target(name: "ClientGame"),
+                    .target(name: "ClientMusic"),
+                    .target(name: "ClientAudio"),
+                    .external(name: "ComposableArchitecture")
                 ]
             ),
-            sources: ["M_GAME/Sources/**"],
-            resources: ["M_GAME/Resources/**"],
-            dependencies: [
-                .target(name: "FeatureLogin"),
-                .target(name: "FeatureLobby"),
-                .target(name: "FeatureGame"),
-                .target(name: "ClientAudioLive"),
-                .target(name: "ClientAuthLive"),
-                .target(name: "ClientRoomLive"),
-                .target(name: "ClientMusicLive"),
-                .target(name: "ClientGameLive"),
-                .external(name: "ComposableArchitecture")
-            ]
-        ),
+        
+            .target(name: "FeatureGameTest",
+                    destinations: .iOS,
+                    product: .unitTests,
+                    bundleId: "io.tuist.MGAME.FeatureGameTest",
+                    sources: ["Features/Game/Tests/**"],
+                    dependencies: [
+                        .target(name: "FeatureGame"),
+                        .target(name: "ClientGameTest"),
+                        .target(name: "ClientAudioTest"),
+                        .target(name: "ClientMusicTest")
+                    ]
+                   ),
+        
+            .target(name: "MDS",
+                    destinations: .iOS,
+                    product: .framework,
+                    bundleId: "io.tuist.MGAME.MDS",
+                    sources: ["Shared/MDS/Sources/**"],
+                    resources: ["Shared/MDS/Resources/**"]
+                   ),
+        
+            .target(
+                name: "M_GAME",
+                destinations: .iOS,
+                product: .app,
+                bundleId: "io.tuist.M-GAME",
+                infoPlist: .extendingDefault(
+                    with: [
+                        "UILaunchScreen": [
+                            "UIColorName": "",
+                            "UIImageName": "",
+                        ],
+                    ]
+                ),
+                sources: ["M_GAME/Sources/**"],
+                resources: ["M_GAME/Resources/**"],
+                dependencies: [
+                    .target(name: "FeatureLogin"),
+                    .target(name: "FeatureLobby"),
+                    .target(name: "FeatureGame"),
+                    .target(name: "ClientAudioLive"),
+                    .target(name: "ClientAuthLive"),
+                    .target(name: "ClientRoomLive"),
+                    .target(name: "ClientMusicLive"),
+                    .target(name: "ClientGameLive"),
+                    .external(name: "ComposableArchitecture")
+                ]
+            ),
     ]
 )
