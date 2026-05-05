@@ -87,7 +87,6 @@ struct GameReducer {
                     
                     return .run { send in
                         try await gameClient.submitAnswer(submission)
-                        
                     }
                     
                 case .answerWrong:
@@ -111,11 +110,10 @@ struct GameReducer {
                     return .none
                     
                 case .nextRound:
-                    if let data = state.roundData, data.isFinal {
-                        state.roundState = .finished
-                    } else {
-                        state.roundState = .idle
-                    }
+                    let isFinal = state.roundData?.isFinal == true
+                    state.roundData = nil
+                    state.roundResult = nil
+                    state.roundState = isFinal ? .finished : .idle
                     
                     return .none
                     
