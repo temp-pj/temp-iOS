@@ -26,7 +26,7 @@ public extension GameClient {
         } gameEvents: {
             AsyncStream<GameEvent> { continuation in
                 Task {
-                    for await rawString in webSocketClient.receive() {
+                    for await rawString in await webSocketClient.receive() {
                         if let data = rawString.data(using: .utf8),
                            let event = try? JSONDecoder().decode(GameEvent.self, from: data) {
                             continuation.yield(event)

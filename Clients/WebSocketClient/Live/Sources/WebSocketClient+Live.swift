@@ -11,41 +11,52 @@ import Foundation
 public extension WebSocketClient {
     static var live: WebSocketClient {
         let connection = WebSocketConnection()
-        let (stream, continuation) = AsyncStream<String>.makeStream()
         
         return WebSocketClient { url in
-            await connection.connect(url: url, continuation: continuation)
+            await connection.connect(url: url)
         } send: { message in
             try await connection.send(text: message)
         } receive: {
-            stream
+            await connection.receive()
         } disconnect: {
             await connection.disconnect()
         }
-        
     }
 }
 
+enum WebSocketConnectionError: Error {
+    case notConnected
+}
 
 private actor WebSocketConnection {
-    private var task: URLSessionWebSocketTask?
-    private var continuation: AsyncStream<String>.Continuation?
     private let session = URLSession(configuration: .default)
+    private var task: URLSessionWebSocketTask?
+    
+    private var continuation: AsyncStream<String>.Continuation?
+    private var stream: AsyncStream<String> = AsyncStream { $0.finish() }
     
     
-    func connect(url: URL, continuation: AsyncStream<String>.Continuation) {
+    func connect(url: URL) {
+        let (stream, continuation) = AsyncStream<String>.makeStream()
+        self.stream = stream
         self.continuation = continuation
+        
         task = session.webSocketTask(with: url)
         task?.resume()
+        
         startListening()
     }
     
     func send(text: String) async throws {
+        guard let task else { throw WebSocketConnectionError.notConnected }
+        
         let message = URLSessionWebSocketTask.Message.string(text)
-        try await task?.send(message)
+        try await task.send(message)
     }
     
-    func startListening() {
+    func receive() -> AsyncStream<String> { stream }
+    
+    private func startListening() {
         guard let task, let continuation else { return }
         
         Task { [task, continuation] in
