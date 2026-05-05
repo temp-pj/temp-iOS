@@ -14,7 +14,7 @@ struct GameView: View {
             
             if let roundData = store.roundData {
                 HStack {
-                    ForEach(roundData.wordCards, id: \.self) { word in
+                    ForEach(Array(roundData.wordCards.enumerated()), id: \.offset) { _, word in
                         Text(word)
                             .bold()
                     }
