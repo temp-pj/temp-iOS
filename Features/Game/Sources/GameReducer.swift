@@ -99,6 +99,7 @@ struct GameReducer {
                     }
                     
                 case .penaltyFinished:
+                    guard state.roundState == .playing(.penalized) else { return .none }
                     state.roundState = .playing(.enabled)
                     
                     return .none
