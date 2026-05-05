@@ -14,19 +14,21 @@ import Models
 import XCTest
 
 final class GameReducerTests: XCTestCase {
-    func test_PRELOAD_SONG_이벤트_받음() async {
+    func test_PRELOAD_SONG_이벤트_받음() async throws {
         let store = await TestStore(initialState: GameReducer.State(roomID: UUID(1234567890)), reducer: { GameReducer() })
-        let url = URL(string: "www.naver.com")!
+        let url = try XCTUnwrap(URL(string: "www.naver.com"))
         
         await store.send(.preloadSong(url)) { $0.roundState = .loading(url) }
     }
     
-    func test_on_appear() async {
+    func test_on_appear() async throws {
         let (stream, continuation) = AsyncStream<GameEvent>.makeStream()
         
-        let store = await TestStore(initialState: GameReducer.State(roomID: UUID(1234567890)), reducer: { GameReducer() }) {
+        let store = await TestStore(initialState: GameReducer.State(roomID: UUID(1234567890)),
+                                    reducer: { GameReducer() },
+                                    withDependencies: {
             $0.gameClient = .mock(events: { stream })
-        }
+        })
         
         await store.send(.onAppear) {
             $0.connectionState = .connecting
@@ -36,7 +38,7 @@ final class GameReducerTests: XCTestCase {
             $0.connectionState = .connected
         }
         
-        let url = URL(string: "https://example.com/song.mp3")!
+        let url = try XCTUnwrap(URL(string: "https://example.com/song.mp3"))
         continuation.yield(.preloadSong(url))
         
         await store.receive(\.preloadSong) {
@@ -50,8 +52,8 @@ final class GameReducerTests: XCTestCase {
         }
     }
     
-    func test_ROUND_START_이벤트_받음() async {
-        let url = URL(string: "www.naver.com")!
+    func test_ROUND_START_이벤트_받음() async throws {
+        let url = try XCTUnwrap(URL(string: "www.naver.com"))
         let store = await TestStore(initialState: GameReducer.State(roundState: .loading(url), roomID: UUID(1234567890)), reducer: { GameReducer() })
         
         let roundData = RoundData(roundNumber: 1, totalRounds: 100, wordCards: ["달", "리", "표", "현", "할", "수", "없", "어", "요"], timeLimit: 300)
@@ -79,9 +81,11 @@ final class GameReducerTests: XCTestCase {
         let inputState = InputState.submitting
         let clock = TestClock()
         
-        let store = await TestStore(initialState: GameReducer.State(roundState: .playing(inputState), roundData: roundData, roomID: UUID(1234567890)), reducer: { GameReducer() }) {
-            $0.continuousClock = clock
-        }
+        let store = await TestStore(initialState: GameReducer.State(roundState: .playing(inputState),
+                                                                    roundData: roundData,
+                                                                    roomID: UUID(1234567890)),
+                                    reducer: { GameReducer() },
+                                    withDependencies: { $0.continuousClock = clock })
     
         await store.send(.answerWrong) {
             $0.roundState = .playing(.penalized)

@@ -13,5 +13,4 @@ public enum RoundState: Equatable {
     case playing(InputState)
     case result
     case finished
-
 }

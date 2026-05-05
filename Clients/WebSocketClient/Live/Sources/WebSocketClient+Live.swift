@@ -35,7 +35,6 @@ private actor WebSocketConnection {
     private var continuation: AsyncStream<String>.Continuation?
     private var stream: AsyncStream<String> = AsyncStream { $0.finish() }
     
-    
     func connect(url: URL) {
         let (stream, continuation) = AsyncStream<String>.makeStream()
         self.stream = stream

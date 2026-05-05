@@ -12,7 +12,7 @@ public struct RoundResult: Equatable, Sendable, Decodable {
     public let correctAnswer: String
     public let scores: [UUID: Int]
     
-    public init(winnerId: UUID?, correctAnswer: String, scores: [UUID : Int]) {
+    public init(winnerId: UUID?, correctAnswer: String, scores: [UUID: Int]) {
         self.winnerId = winnerId
         self.correctAnswer = correctAnswer
         self.scores = scores

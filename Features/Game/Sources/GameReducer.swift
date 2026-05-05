@@ -85,7 +85,7 @@ struct GameReducer {
                 case .submitAnswer(let submission):
                     state.roundState = .playing(.submitting)
                     
-                    return .run { send in
+                    return .run { _ in
                         try await gameClient.submitAnswer(submission)
                     }
                     
@@ -122,7 +122,7 @@ struct GameReducer {
                     return .none
                     
                 case .onDisappear:
-                    return .run { send in
+                    return .run { _ in
                         try await gameClient.disconnect()
                     }
             }
