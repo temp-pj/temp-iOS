@@ -6,16 +6,17 @@
 //
 
 import ClientGame
+import ConcurrencyExtras
+import Foundation
 import Models
 
 public extension GameClient {
-    static let mockSuccess = GameClient { _ in
-        
-    } submitAnswer: { _ in
-        
-    } gameEvents: {
-        AsyncStream<GameEvent> { $0.finish() }
-    } disconnect: {
-        
+    static func mock(
+    connect: @escaping @Sendable (UUID) async throws -> Void = { _ in },
+    onSubmitAnswer: @escaping @Sendable (Submission) async throws -> Void = { _ in },
+    events: @escaping @Sendable () -> AsyncStream<GameEvent> = { .finished },
+    onDisconnect: @escaping @Sendable () async throws -> Void = { }
+    ) -> Self {
+        Self(connect: connect, submitAnswer: onSubmitAnswer, gameEvents: events, disconnect: onDisconnect)
     }
 }
