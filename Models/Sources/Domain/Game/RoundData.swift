@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct RoundData: Equatable {
+public struct RoundData: Equatable, Sendable, Decodable {
     public let roundNumber: Int
     public let totalRounds: Int
     public let wordCards: [String]

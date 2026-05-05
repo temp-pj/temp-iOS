@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Submission: Equatable {
+public struct Submission: Equatable, Encodable {
     let cards: [String]
     let submissionTime: TimeInterval
     
