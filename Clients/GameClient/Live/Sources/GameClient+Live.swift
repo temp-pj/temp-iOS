@@ -6,16 +6,39 @@
 //
 
 import ClientGame
+import ClientWebSocket
+import Dependencies
+import Foundation
+import Models
 
 public extension GameClient {
-    static let live = GameClient { _ in
-        fatalError("game connect live implementation is not implemented yet")
-    } submitAnswer: { _ in
-        fatalError("game submit answer live implementation is not implemented yet")
-    } gameEvents: {
-        fatalError("game events live implementation is not implemented yet")
-    } disconnect: {
-        fatalError("game disconnect live implementation is not implemented yet")
+    static var live: GameClient {
+        @Dependency(\.webSocketClient) var webSocketClient
+        
+        return GameClient { roomID in
+            let tempURL = URL(string: "wss://\(roomID)")!
+            try await webSocketClient.connect(tempURL)
+        } submitAnswer: { submission in
+            let data = try JSONEncoder().encode(submission)
+            let jsonString = String(data: data, encoding: .utf8)!
+            
+            try await webSocketClient.send(jsonString)
+        } gameEvents: {
+            AsyncStream<GameEvent> { continuation in
+                Task {
+                    for await rawString in webSocketClient.receive() {
+                        if let data = rawString.data(using: .utf8),
+                           let event = try? JSONDecoder().decode(GameEvent.self, from: data) {
+                            continuation.yield(event)
+                        }
+                    }
+                    
+                    continuation.finish()
+                }
+            }
+        } disconnect: {
+            try await webSocketClient.disconnect()
+        }
     }
-
 }
+    
