@@ -5,14 +5,14 @@ let project = Project(
     targets: [
         .target(name: "Models",
                 destinations: .iOS,
-                product: .framework,
+                product: .staticFramework,
                 bundleId: "io.tuist.MGAME.Models",
                 sources: ["Models/Sources/**"]
                ),
         
             .target(name: "ClientAuth",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientAuth",
                     sources: ["Clients/AuthClient/Interface/Sources/**"],
                     dependencies: [
@@ -23,7 +23,7 @@ let project = Project(
         
             .target(name: "ClientAuthLive",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientAuthLive",
                     sources: ["Clients/AuthClient/Live/Sources/**"],
                     dependencies: [
@@ -35,7 +35,7 @@ let project = Project(
         
             .target(name: "ClientAuthTest",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientAuthTest",
                     sources: ["Clients/AuthClient/Test/Sources/**"],
                     dependencies: [
@@ -48,7 +48,7 @@ let project = Project(
             .target(
                 name: "ClientRoom",
                 destinations: .iOS,
-                product: .framework,
+                product: .staticFramework,
                 bundleId: "io.tuist.MGAME.ClientRoom",
                 sources: ["Clients/RoomClient/Interface/Sources/**"],
                 dependencies: [
@@ -59,7 +59,7 @@ let project = Project(
         
             .target(name: "ClientRoomLive",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientRoomLive",
                     sources: ["Clients/RoomClient/Live/Sources/**"],
                     dependencies: [
@@ -72,7 +72,7 @@ let project = Project(
             .target(
                 name: "ClientRoomTest",
                 destinations: .iOS,
-                product: .framework,
+                product: .staticFramework,
                 bundleId: "io.tuist.MGAME.ClientRoomTest",
                 sources: ["Clients/RoomClient/Test/Sources/**"],
                 dependencies: [
@@ -85,7 +85,7 @@ let project = Project(
             .target(
                 name: "ClientGame",
                 destinations: .iOS,
-                product: .framework,
+                product: .staticFramework,
                 bundleId: "io.tuist.MGAME.ClientGame",
                 sources: ["Clients/GameClient/Interface/Sources/**"],
                 dependencies: [
@@ -96,7 +96,7 @@ let project = Project(
         
             .target(name: "ClientGameLive",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientGameLive",
                     sources: ["Clients/GameClient/Live/Sources/**"],
                     dependencies: [
@@ -109,7 +109,7 @@ let project = Project(
         
             .target(name: "ClientGameTest",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientGameTest",
                     sources: ["Clients/GameClient/Test/Sources/**"],
                     dependencies: [
@@ -121,7 +121,7 @@ let project = Project(
         
             .target(name: "ClientWebSocket",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientWebSocket",
                     sources: ["Clients/WebSocketClient/Interface/Sources/**"],
                     dependencies: [
@@ -133,7 +133,7 @@ let project = Project(
         
             .target(name: "ClientWebSocketLive",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientWebSocketLive",
                     sources: ["Clients/WebSocketClient/Live/Sources/**"],
                     dependencies: [
@@ -145,7 +145,7 @@ let project = Project(
         
             .target(name: "ClientWebSocketTest",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientWebSocketTest",
                     sources: ["Clients/WebSocketClient/Test/Sources/**"],
                     dependencies: [
@@ -160,7 +160,7 @@ let project = Project(
             .target(
                 name: "ClientMusic",
                 destinations: .iOS,
-                product: .framework,
+                product: .staticFramework,
                 bundleId: "io.tuist.MGAME.ClientMusic",
                 sources: ["Clients/MusicClient/Interface/Sources/**"],
                 dependencies: [
@@ -171,7 +171,7 @@ let project = Project(
         
             .target(name: "ClientMusicLive",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientMusicLive",
                     sources: ["Clients/MusicClient/Live/Sources/**"],
                     dependencies: [
@@ -182,7 +182,7 @@ let project = Project(
         
             .target(name: "ClientMusicTest",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.ClientMusicTest",
                     sources: ["Clients/MusicClient/Test/Sources/**"],
                     dependencies: [
@@ -195,7 +195,7 @@ let project = Project(
             .target(
                 name: "ClientAudio",
                 destinations: .iOS,
-                product: .framework,
+                product: .staticFramework,
                 bundleId: "io.tuist.MGAME.ClientAudio",
                 sources: ["Clients/AudioClient/Interface/Sources/**"],
                 dependencies: [
@@ -207,7 +207,7 @@ let project = Project(
             .target(
                 name: "ClientAudioLive",
                 destinations: .iOS,
-                product: .framework,
+                product: .staticFramework,
                 bundleId: "io.tuist.MGAME.ClientAudioLive",
                 sources: ["Clients/AudioClient/Live/Sources/**"],
                 dependencies: [
@@ -220,7 +220,7 @@ let project = Project(
             .target(
                 name: "ClientAudioTest",
                 destinations: .iOS,
-                product: .framework,
+                product: .staticFramework,
                 bundleId: "io.tuist.MGAME.ClientAudioTest",
                 sources: ["Clients/AudioClient/Test/Sources/**"],
                 dependencies: [
@@ -233,7 +233,7 @@ let project = Project(
             .target(
                 name: "FeatureLogin",
                 destinations: .iOS,
-                product: .framework,
+                product: .staticFramework,
                 bundleId: "io.tuist.MGAME.FeatureLogin",
                 sources: ["Features/Login/Sources/**"],
                 dependencies: [
@@ -246,7 +246,7 @@ let project = Project(
         .target(
             name: "FeatureLobby",
             destinations: .iOS,
-            product: .framework,
+            product: .staticFramework,
             bundleId: "io.tuist.MGAME.FeatureLobby",
             sources: ["Features/Lobby/Sources/**"],
             dependencies: [
@@ -254,6 +254,7 @@ let project = Project(
                 .target(name: "Models"),
                 .target(name: "ClientAuth"),
                 .target(name: "ClientRoom"),
+                .target(name: "ClientWebSocket"),
                 .external(name: "ComposableArchitecture")
             ]
         ),
@@ -261,7 +262,7 @@ let project = Project(
             .target(
                 name: "FeatureGame",
                 destinations: .iOS,
-                product: .framework,
+                product: .staticFramework,
                 bundleId: "io.tuist.MGAME.FeatureGame",
                 sources: ["Features/Game/Sources/**"],
                 dependencies: [
@@ -289,7 +290,7 @@ let project = Project(
         
             .target(name: "MDS",
                     destinations: .iOS,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "io.tuist.MGAME.MDS",
                     sources: ["Shared/MDS/Sources/**"],
                     resources: ["Shared/MDS/Resources/**"]
@@ -319,6 +320,7 @@ let project = Project(
                     .target(name: "ClientRoomLive"),
                     .target(name: "ClientMusicLive"),
                     .target(name: "ClientGameLive"),
+                    .target(name: "ClientWebSocketLive"),
                     .external(name: "ComposableArchitecture")
                 ]
             ),
