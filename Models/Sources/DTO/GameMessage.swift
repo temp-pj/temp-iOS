@@ -7,9 +7,10 @@
 
 import Foundation
 
-enum GameMessage {
+public enum GameMessage {
     case playerJoined(PlayerJoinedPayload)
     case playerLeft(PlayerLeftPayload)
+    case unknown
 }
 
 extension GameMessage: Decodable {
@@ -19,7 +20,7 @@ extension GameMessage: Decodable {
         case timestamp = "Timestamp"
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(String.self, forKey: .type)
         

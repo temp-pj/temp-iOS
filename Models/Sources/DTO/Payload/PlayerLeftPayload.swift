@@ -5,8 +5,8 @@
 //  Created by 송지혁 on 5/12/26.
 //
 
-struct PlayerLeftPayload: Codable {
-    let playerId: String
+public struct PlayerLeftPayload: Codable {
+    public let playerId: String
     
     enum CodingKeys: String, CodingKey {
         case playerId = "PlayerID"
