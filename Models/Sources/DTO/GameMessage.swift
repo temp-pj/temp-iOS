@@ -33,7 +33,7 @@ extension GameMessage: Decodable {
                 self = .playerLeft(payload)
                 
             default:
-                throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown type: \(type)")
+                self = .unknown
         }
     }
 }
