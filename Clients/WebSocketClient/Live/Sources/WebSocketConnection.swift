@@ -76,7 +76,13 @@ public actor WebSocketConnection {
                         default: break
                     }
                 } catch {
-                    continuation.yield(.disconnected(.networkError))
+                    let reason: WebSocketEvent.CloseReason
+                    if let urlError = error as? URLError, urlError.code == .cancelled {
+                        reason = .normal
+                    } else {
+                        reason = .networkError
+                    }
+                    continuation.yield(.disconnected(reason))
                     continuation.finish()
                     return
                 }
