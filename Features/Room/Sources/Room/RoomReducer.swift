@@ -60,7 +60,7 @@ public struct RoomReducer {
                             await send(.receive(roomEvent))
                         }
                     }
-                    .cancellable(id: CancelID.roomEvents)
+                    .cancellable(id: CancelID.roomEvents, cancelInFlight: true)
                     
                 case .toServer(let request):
                     return .run { _ in

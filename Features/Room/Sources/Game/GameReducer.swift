@@ -32,6 +32,10 @@ public struct GameReducer {
         }
     }
     
+    enum CancelID {
+        case penaltyTimer
+    }
+    
     @Dependency(\.continuousClock) var clock
     
     public var body: some ReducerOf<Self> {
@@ -80,6 +84,7 @@ public struct GameReducer {
                                 try await clock.sleep(for: .milliseconds(500))
                                 await send(.penaltyFinished)
                             }
+                            .cancellable(id: CancelID.penaltyTimer, cancelInFlight: true)
                             
                         case .roundEnded(let result):
                             state.roundState = .result
