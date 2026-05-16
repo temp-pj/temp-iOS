@@ -1,9 +1,11 @@
 import ClientAudioLive
 import ClientAuthLive
-import ClientGameLive
+import ClientRoomSessionLive
 import ClientMusicLive
 import ClientRoomLive
 import ComposableArchitecture
+import FeatureRoom
+import Foundation
 import SwiftUI
 
 @main
@@ -14,7 +16,7 @@ struct MGAMEApp: App {
         $0.authClient = .live
         $0.musicClient = .live
         $0.roomClient = .live
-        $0.gameClient = .live
+        $0.roomSessionClient = .live
         $0.audioClient = .live
     }
     

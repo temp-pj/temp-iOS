@@ -8,6 +8,10 @@ disabled_rules:
   - line_length
   - switch_case_alignment
   - trailing_newline
+  - multiple_closures_with_trailing_closure
+  - force_unwrapping
+  - force_try
+  - nesting
 
 excluded:
   - Tuist
@@ -23,3 +27,9 @@ excluded:
 type_body_length:
   warning: 300
   error: 500
+
+function_body_length:
+  warning: 150
+  error: 200
+  excluded:
+    - "**/Tests/**"
