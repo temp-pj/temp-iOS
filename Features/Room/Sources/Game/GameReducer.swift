@@ -20,7 +20,7 @@ public struct GameReducer {
     }
     
     public enum Action {
-        case addLetter(Int)
+        case selectLetter(Int)
         case submit(String)
         case penaltyFinished
         

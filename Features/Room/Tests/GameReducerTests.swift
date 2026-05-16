@@ -19,15 +19,15 @@ final class GameReducerTests: XCTestCase {
         let roundData = RoundData(roundNumber: 1, totalRounds: 100, wordCards: ["그", "대", "만"], answerLength: 3, timeLimit: 10000)
         let store = await TestStore(initialState: GameReducer.State(roundData: roundData), reducer: { GameReducer() })
         
-        await store.send(.addLetter(0)) {
+        await store.send(.selectLetter(0)) {
             $0.selectedLetters = ["그"]
         }
         
-        await store.send(.addLetter(1)) {
+        await store.send(.selectLetter(1)) {
             $0.selectedLetters = ["그", "대"]
         }
         
-        await store.send(.addLetter(2)) {
+        await store.send(.selectLetter(2)) {
             $0.selectedLetters = ["그", "대", "만"]
         }
         
@@ -45,10 +45,10 @@ final class GameReducerTests: XCTestCase {
             reducer: { GameReducer() }
         )
         
-        await store.send(.addLetter(0))
+        await store.send(.selectLetter(0))
     }
     
-    func test_inputState_penalized_일_때_addLetter() async {
+    func test_inputState_penalized_일_때_selectLetter() async {
         let roundData = RoundData(roundNumber: 1, totalRounds: 100, wordCards: ["그", "대", "만"], answerLength: 3, timeLimit: 10000)
         
         let store = await TestStore(
@@ -56,10 +56,10 @@ final class GameReducerTests: XCTestCase {
             reducer: { GameReducer() }
         )
         
-        await store.send(.addLetter(0))
+        await store.send(.selectLetter(0))
     }
     
-    func test_inputState_submitting_일_떄_addLetter() async {
+    func test_inputState_submitting_일_떄_selectLetter() async {
         let roundData = RoundData(roundNumber: 1, totalRounds: 100, wordCards: ["그", "대", "만"], answerLength: 3, timeLimit: 10000)
         
         let store = await TestStore(
@@ -67,16 +67,16 @@ final class GameReducerTests: XCTestCase {
             reducer: { GameReducer() }
         )
         
-        await store.send(.addLetter(0))
+        await store.send(.selectLetter(0))
     }
     
-    func test_roundData_nil_일_때_addLetter() async {
+    func test_roundData_nil_일_때_selectLetter() async {
         let store = await TestStore(
             initialState: GameReducer.State(inputState: .enabled),
             reducer: { GameReducer() }
         )
         
-        await store.send(.addLetter(0))
+        await store.send(.selectLetter(0))
     }
     
     func test_penalized_아닐_때_penaltyFinished_무시() async {
