@@ -10,12 +10,12 @@ import Foundation
 public struct WebSocketClient: Sendable {
     public var connect: @Sendable (URL) async throws -> Void
     public var send: @Sendable (String) async throws -> Void
-    public var receive: @Sendable () async -> AsyncStream<String>
+    public var receive: @Sendable () async -> AsyncStream<WebSocketEvent>
     public var disconnect: @Sendable () async throws -> Void
     
     public init(connect: @escaping @Sendable (URL) async throws -> Void,
                 send: @escaping @Sendable (String) async throws -> Void,
-                receive: @escaping @Sendable () async -> AsyncStream<String>,
+                receive: @escaping @Sendable () async -> AsyncStream<WebSocketEvent>,
                 disconnect: @escaping @Sendable () async throws -> Void) {
         self.connect = connect
         self.send = send

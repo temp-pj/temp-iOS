@@ -32,12 +32,26 @@ public extension RoomSessionClient {
         } roomEvents: {
             AsyncStream<RoomEvent> { continuation in
                 Task {
-                    for await rawString in await webSocketClient.receive() {
-                        if let data = rawString.data(using: .utf8) {
-                            let message = try JSONDecoder().decode(WebSocketMessage.self, from: data)
-                            let event = try message.toRoomEvent()
-                            continuation.yield(event)
+                    for await event in await webSocketClient.receive() {
+                        switch event {
+                            case .connected:
+                                continuation.yield(.serverConnectionChanged(.connected))
+                            case .disconnected(let reason):
+                                switch reason {
+                                    case .normal:
+                                        continuation.yield(.serverConnectionChanged(.disconnected(.normal)))
+                                    case .networkError:
+                                        continuation.yield(.serverConnectionChanged(.disconnected(.networkError)))
+                                }
+                                
+                            case .message(let rawString):
+                                if let data = rawString.data(using: .utf8) {
+                                    let message = try JSONDecoder().decode(WebSocketMessage.self, from: data)
+                                    let event = try message.toRoomEvent()
+                                    continuation.yield(event)
+                                }
                         }
+                        
                     }
                     
                     continuation.finish()
