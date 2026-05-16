@@ -7,9 +7,10 @@
 
 import Foundation
 
-public enum GameEvent: Equatable, Sendable, Decodable {
+public enum GameEvent: Equatable, Sendable {
     case preloadSong(URL)
-    case roundStart(RoundData)
-    case answerWrong
-    case roundResult(RoundResult)
+    case nextRound
+    case roundStarted(RoundData)
+    case wrongAnswer
+    case roundEnded(RoundResult)
 }
