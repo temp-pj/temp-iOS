@@ -16,5 +16,4 @@ public enum DisconnectReason: Codable, Equatable {
     case normal
     case networkError
     case kicked
-    case serverClosed
 }
