@@ -49,7 +49,7 @@ public extension WebSocketMessage {
                 
             case "HOST_CHANGED":
                 let player = try JSONDecoder().decode(Player.self, from: self.payload)
-                return .playerLeft(player)
+                return .hostChanged(player)
                 
             case "ROOM_CLOSED":
                 let reason = try JSONDecoder().decode(RoomCloseReason.self, from: self.payload)
