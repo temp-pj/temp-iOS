@@ -41,9 +41,10 @@ public struct GameReducer {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-                case .addLetter(let index):
+                case .selectLetter(let index):
                     guard state.inputState == .enabled else { return .none }
-                    guard let roundData = state.roundData, state.selectedLetters.count < roundData.answerLength else { return .none }
+                    guard let roundData = state.roundData, index >= 0, index < roundData.wordCards.count,
+                            state.selectedLetters.count < roundData.answerLength else { return .none }
                     let letter = roundData.wordCards[index]
                     state.selectedLetters.append(letter)
                     
@@ -54,6 +55,7 @@ public struct GameReducer {
                     return .none
                     
                 case .submit(let answer):
+                    guard state.inputState == .enabled else { return .none }
                     state.inputState = .submitting
                     return .send(.delegate(.submitAnswer(answer)))
                     
