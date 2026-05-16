@@ -46,9 +46,12 @@ public extension RoomSessionClient {
                                 
                             case .message(let rawString):
                                 if let data = rawString.data(using: .utf8) {
-                                    let message = try JSONDecoder().decode(WebSocketMessage.self, from: data)
-                                    let event = try message.toRoomEvent()
-                                    continuation.yield(event)
+                                    do {
+                                        let message = try JSONDecoder().decode(WebSocketMessage.self, from: data)
+                                        let event = try message.toRoomEvent()
+                                        continuation.yield(event)
+                                    } catch { continue }
+                                    
                                 }
                         }
                         
