@@ -41,10 +41,7 @@ public extension AudioClient {
         } playbackState: {
             
             return AsyncStream<PlaybackState> { continuation in
-                let playbackStatePublisher = player.state.objectWillChange
-                var cancellables = Set<AnyCancellable>()
-                
-                playbackStatePublisher
+                let cancellable = player.state.objectWillChange
                     .sink { _ in
                         let playbackState = player.state.playbackStatus
                         
@@ -65,7 +62,11 @@ public extension AudioClient {
                                 continuation.yield(.stopped)
                         }
                     }
-                    .store(in: &cancellables)
+                
+                continuation.onTermination = { _ in
+                    _ = cancellable
+                }
+                    
             }
         }
     }()
