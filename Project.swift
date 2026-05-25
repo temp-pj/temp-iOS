@@ -307,6 +307,7 @@ let project = Project(
                             "UIColorName": "",
                             "UIImageName": "",
                         ],
+                        "NSAppleMusicUsageDescription": "음악 퀴즈를 위해 Apple Music 접근이 필요합니다."
                     ]
                 ),
                 sources: ["M_GAME/Sources/**"],
