@@ -45,9 +45,7 @@ public extension AudioClient {
                 var cancellables = Set<AnyCancellable>()
                 
                 playbackStatePublisher
-                    .sink(receiveCompletion: { _ in
-                    
-                    }, receiveValue: { status in
+                    .sink { status in
                         let playbackState = player.state.playbackStatus
                         
                         switch playbackState {
@@ -66,7 +64,7 @@ public extension AudioClient {
                             default:
                                 continuation.yield(.stopped)
                         }
-                    })
+                    }
                     .store(in: &cancellables)
             }
         }
