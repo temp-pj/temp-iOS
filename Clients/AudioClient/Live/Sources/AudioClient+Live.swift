@@ -45,7 +45,7 @@ public extension AudioClient {
                 var cancellables = Set<AnyCancellable>()
                 
                 playbackStatePublisher
-                    .sink { status in
+                    .sink { _ in
                         let playbackState = player.state.playbackStatus
                         
                         switch playbackState {
