@@ -6,14 +6,69 @@
 //
 
 import ClientAudio
+import Combine
+import Models
+import MusicKit
+
+public enum AudioError: Error {
+    case songNotFound
+}
 
 public extension AudioClient {
-    static let live = AudioClient { _ in
-        fatalError("preload live implementation is not implemented yet")
-    } play: {
-        fatalError("play live implementation is not implemented yet")
-    } stop: {
-        fatalError("stop live implementation is not implemented yet")
-    }
+    
+    static let live: AudioClient = {
+        let player = ApplicationMusicPlayer.shared
+        
+        return AudioClient { id, start, end in
+            var request = MusicCatalogResourceRequest<Song>(matching: \.id, equalTo: MusicItemID(id))
+            request.properties = [.albums]
+            let response = try await request.response()
+            
+            let songs = response.items
+            if songs.isEmpty { throw AudioError.songNotFound }
+            guard let song = songs.first else { throw AudioError.songNotFound }
+            
+            let entry = MusicPlayer.Queue.Entry(song, startTime: start, endTime: end)
+            player.queue = ApplicationMusicPlayer.Queue([entry])
+            
+            try await player.prepareToPlay()
+            
+        } play: {
+            try await player.play()
+            
+        } stop: {
+            player.stop()
+        } playbackState: {
+            
+            return AsyncStream<PlaybackState> { continuation in
+                let cancellable = player.state.objectWillChange
+                    .sink { _ in
+                        let playbackState = player.state.playbackStatus
+                        
+                        switch playbackState {
+                            case .playing:
+                                continuation.yield(.playing)
+                                
+                            case .paused:
+                                continuation.yield(.paused)
+                                
+                            case .interrupted:
+                                continuation.yield(.interrupted)
+                                
+                            case .stopped:
+                                continuation.yield(.stopped)
+                                
+                            default:
+                                continuation.yield(.stopped)
+                        }
+                    }
+                
+                continuation.onTermination = { _ in
+                    _ = cancellable
+                }
+                    
+            }
+        }
+    }()
 
 }

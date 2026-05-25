@@ -10,7 +10,8 @@ import Dependencies
 extension AudioClient: DependencyKey {
     public static let liveValue = AudioClient(preload: unimplemented("AudioClient.preload"),
                                               play: unimplemented("AudioClient.play"),
-                                              stop: unimplemented("AudioClient.stop"))
+                                              stop: unimplemented("AudioClient.stop"),
+                                              playbackState: unimplemented("AudioClient.playbackState"))
 }
 
 extension DependencyValues {
