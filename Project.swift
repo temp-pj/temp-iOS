@@ -158,36 +158,36 @@ let project = Project(
         
         
             .target(
-                name: "ClientMusic",
+                name: "ClientMusicEntitlement",
                 destinations: .iOS,
                 product: .staticFramework,
-                bundleId: "io.tuist.MGAME.ClientMusic",
-                sources: ["Clients/MusicClient/Interface/Sources/**"],
+                bundleId: "io.tuist.MGAME.ClientMusicEntitlement",
+                sources: ["Clients/MusicEntitlementClient/Interface/Sources/**"],
                 dependencies: [
                     .target(name: "Models"),
                     .external(name: "ComposableArchitecture")
                 ]
             ),
         
-            .target(name: "ClientMusicLive",
+            .target(name: "ClientMusicEntitlementLive",
                     destinations: .iOS,
                     product: .staticFramework,
-                    bundleId: "io.tuist.MGAME.ClientMusicLive",
-                    sources: ["Clients/MusicClient/Live/Sources/**"],
+                    bundleId: "io.tuist.MGAME.ClientMusicEntitlementLive",
+                    sources: ["Clients/MusicEntitlementClient/Live/Sources/**"],
                     dependencies: [
                         .target(name: "Models"),
-                        .target(name: "ClientMusic"),
+                        .target(name: "ClientMusicEntitlement"),
                         .external(name: "ComposableArchitecture")
                     ]),
         
-            .target(name: "ClientMusicTest",
+            .target(name: "ClientMusicEntitlementTest",
                     destinations: .iOS,
                     product: .staticFramework,
-                    bundleId: "io.tuist.MGAME.ClientMusicTest",
-                    sources: ["Clients/MusicClient/Test/Sources/**"],
+                    bundleId: "io.tuist.MGAME.ClientMusicEntitlementTest",
+                    sources: ["Clients/MusicEntitlementClient/Test/Sources/**"],
                     dependencies: [
                         .target(name: "Models"),
-                        .target(name: "ClientMusic"),
+                        .target(name: "ClientMusicEntitlement"),
                         .external(name: "ComposableArchitecture")
                     ]
                    ),
@@ -269,7 +269,7 @@ let project = Project(
                     .target(name: "MDS"),
                     .target(name: "Models"),
                     .target(name: "ClientRoomSession"),
-                    .target(name: "ClientMusic"),
+                    .target(name: "ClientMusicEntitlement"),
                     .target(name: "ClientAudio"),
                     .external(name: "ComposableArchitecture")
                 ]
@@ -284,7 +284,7 @@ let project = Project(
                         .target(name: "FeatureRoom"),
                         .target(name: "ClientRoomSessionTest"),
                         .target(name: "ClientAudioTest"),
-                        .target(name: "ClientMusicTest")
+                        .target(name: "ClientMusicEntitlementTest")
                     ]
                    ),
         
@@ -318,7 +318,7 @@ let project = Project(
                     .target(name: "ClientAudioLive"),
                     .target(name: "ClientAuthLive"),
                     .target(name: "ClientRoomLive"),
-                    .target(name: "ClientMusicLive"),
+                    .target(name: "ClientMusicEntitlementLive"),
                     .target(name: "ClientRoomSessionLive"),
                     .target(name: "ClientWebSocketLive"),
                     .external(name: "ComposableArchitecture")
