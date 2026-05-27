@@ -9,9 +9,18 @@ import ClientMusicEntitlement
 import Models
 
 public extension MusicEntitlementClient {
-    static let mockSuccess = MusicEntitlementClient {
-        return .authorized
-    } checkEntitlement: {
-        return true
-    }
+    static let mockAuthorizedWithSubscription = Self(
+        authorizationStatus: { .authorized },
+        requestAuthorization: { .authorized },
+        checkEntitlement: { true })
+    
+    static let mockAuthorizedNoSubscription = Self(
+        authorizationStatus: { .authorized },
+        requestAuthorization: { .authorized },
+        checkEntitlement: { false })
+    
+    static let mockDenied = Self(
+        authorizationStatus: { .denied },
+        requestAuthorization: { .denied },
+        checkEntitlement: { false })
 }
