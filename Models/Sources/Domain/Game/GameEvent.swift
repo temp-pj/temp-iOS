@@ -8,7 +8,6 @@
 import Foundation
 
 public enum GameEvent: Equatable, Sendable {
-    case preloadSong(URL)
     case nextRound
     case roundStarted(RoundData)
     case wrongAnswer
