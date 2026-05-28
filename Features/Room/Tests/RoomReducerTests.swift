@@ -24,15 +24,22 @@ final class RoomReducerTests: XCTestCase {
         let player2 = Player(id: UUID())
         let player3 = Player(id: UUID())
         
+        var fetchedID: String?
         var request: RoomRequest?
+        var didPlay = false
+        var didStop = false
         
         let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(),
                                                                     hostID: hostPlayer.id,
                                                                     players: [hostPlayer.id: hostPlayer],
                                                                     roomState: .waiting),
                                     reducer: { RoomReducer() }) {
+            $0.audioClient.preload = { id, _, _ in fetchedID = id }
+            $0.audioClient.play = { didPlay = true }
+            $0.audioClient.stop = { didStop = true }
             $0.roomSessionClient = .mock(send: { request = $0 }, roomEvents: { stream })
             $0.continuousClock = clock
+            
         }
         
         let game = GameReducer.State(selectedLetters: [], roundState: .idle)
@@ -74,14 +81,10 @@ final class RoomReducerTests: XCTestCase {
         }
         
         // preload Song
-        let songURL = URL(string: "https://www.naver.com")!
-        continuation.yield(.game(.preloadSong(songURL)))
+        let songID = "1675478652"
+        continuation.yield(.preloadSong(PreloadSong(id: songID, startTime: 0, endTime: 30)))
         
         await store.receive(\.receive)
-        await store.receive(\.game) {
-            $0.gameState?.roundState = .loading(songURL)
-            $0.gameState?.songURL = songURL
-        }
         
         // 라운드 시작
         let roundData = RoundData.mock(roundNumber: 1, totalRounds: 100, wordCards: ["그", "대", "만", "있", "다", "면", "마", "라", "탕"], answerLength: 6, timeLimit: 3600)
@@ -94,6 +97,9 @@ final class RoomReducerTests: XCTestCase {
             $0.gameState?.inputState = .enabled
             $0.gameState?.roundData = roundData
         }
+        await store.receive(\.game)
+        
+        XCTAssertEqual(didPlay, true)
         
         // 전송
         let wrongAnswer = ["마", "라", "탕", "있", "다", "면"]
@@ -128,6 +134,9 @@ final class RoomReducerTests: XCTestCase {
             $0.gameState?.roundResult = roundResult
             $0.gameState?.roundState = .result
         }
+        await store.receive(\.game)
+        
+        XCTAssertEqual(didStop, true)
         
         // 다음 라운드
         continuation.yield(.game(.nextRound))
@@ -138,7 +147,6 @@ final class RoomReducerTests: XCTestCase {
             $0.gameState?.inputState = .enabled
             $0.gameState?.roundData = nil
             $0.gameState?.roundResult = nil
-            $0.gameState?.songURL = nil
             $0.gameState?.selectedLetters = []
         }
         
@@ -243,6 +251,97 @@ final class RoomReducerTests: XCTestCase {
         continuation.finish()
         
         await store.send(.onDisappear)
+    }
+    
+    func test_노래_받기() async {
+        let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
+        var fetchedID: String?
+        
+        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(), hostID: UUID(), players: [:], gameState: GameReducer.State())) {
+            RoomReducer()
+        } withDependencies: {
+            $0.roomSessionClient = .mock(roomEvents: { stream })
+            $0.audioClient.preload = { id, _, _ in fetchedID = id }
+        }
+        
+        await store.send(.onAppear)
+        
+        // 에픽하이 - 우산
+        continuation.yield(.preloadSong(PreloadSong(id: "1675478652", startTime: 0, endTime: 30)))
+        
+        await store.receive(\.receive)
+        XCTAssertEqual(fetchedID, "1675478652")
+        
+        continuation.finish()
+        await store.send(.onDisappear)
+    }
+    
+    func test_라운드_시작() async {
+        let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
+        let roundData = RoundData(roundNumber: 1, totalRounds: 100, wordCards: ["타", "임", "캡", "슐"], answerLength: 4, timeLimit: 1000)
+        var didPlay = false
+        
+        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(),
+                                                                    hostID: UUID(),
+                                                                    players: [:],
+                                                                    roomState: .playing,
+                                                                    gameState: GameReducer.State(roundState: .idle)
+                                                                   ),
+                                    reducer: { RoomReducer() }) {
+            $0.roomSessionClient = .mock(roomEvents: { stream })
+            $0.audioClient.play = { didPlay = true }
+        }
+        
+        await store.send(.onAppear)
+        
+        continuation.yield(.game(.roundStarted(roundData)))
+        
+        await store.receive(\.receive)
+        await store.receive(\.game) {
+            $0.gameState?.roundState = .playing
+            $0.gameState?.inputState = .enabled
+            $0.gameState?.roundData = roundData
+        }
+        await store.receive(\.game)
+        
+        XCTAssertEqual(didPlay, true)
+        
+        continuation.finish()
+        await store.send(.onDisappear)
+    }
+    
+    func test_라운드_종료() async {
+        let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
+        let roundResult = RoundResult(winnerId: UUID(), correctAnswer: "편지", scores: [:])
+        var didStop = false
+        
+        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(),
+                                                                    hostID: UUID(),
+                                                                    players: [:],
+                                                                    roomState: .playing,
+                                                                    gameState: GameReducer.State(roundState: .playing)
+                                                                   ), reducer: { RoomReducer() }) {
+            $0.roomSessionClient = .mock(roomEvents: { stream })
+            $0.audioClient.stop = { didStop = true }
+        }
+        
+        await store.send(.onAppear)
+        
+        continuation.yield(.game(.roundEnded(roundResult)))
+        
+        await store.receive(\.receive)
+        await store.receive(\.game) {
+            $0.gameState?.roundState = .result
+            $0.gameState?.roundResult = roundResult
+            $0.gameState?.inputState = .enabled
+        }
+        await store.receive(\.game)
+        
+        XCTAssertEqual(didStop, true)
+        
+        continuation.finish()
+        await store.send(.onDisappear)
+        
     }
     
     func test_게임_종료() async {

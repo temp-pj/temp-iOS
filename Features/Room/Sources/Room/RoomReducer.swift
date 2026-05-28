@@ -5,6 +5,7 @@
 //  Created by 송지혁 on 5/12/26.
 //
 
+import ClientAudio
 import ClientRoomSession
 import ComposableArchitecture
 import Foundation
@@ -50,6 +51,7 @@ public struct RoomReducer {
     }
     
     @Dependency(\.roomSessionClient) var roomSession
+    @Dependency(\.audioClient) var audioClient
     
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
@@ -93,6 +95,12 @@ public struct RoomReducer {
                         case .roomClosed(let reason):
                             return .none
                             
+                        case .preloadSong(let song):
+                            return .run { _ in
+                                // 추후에 여기서 startTime < endTime 방어 로직 구현
+                                try await audioClient.preload(song.id, song.startTime, song.endTime)
+                            }
+                            
                         case .game(let event):
                             return .send(.game(.serverEvent(event)))
                             
@@ -106,6 +114,16 @@ public struct RoomReducer {
                     
                 case .game(.delegate(.submitAnswer(let answer))):
                     return .send(.toServer(.game(.submitAnswer(answer))))
+                    
+                case .game(.delegate(.playMusic)):
+                    return .run { _ in
+                        try await audioClient.play()
+                    }
+                
+                case .game(.delegate(.stopMusic)):
+                    return .run { _ in
+                        try await audioClient.stop()
+                    }
                     
                 case .onDisappear:
                     return .merge(
