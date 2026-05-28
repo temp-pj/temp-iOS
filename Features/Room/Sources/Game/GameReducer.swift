@@ -14,9 +14,7 @@ public struct GameReducer {
         public var roundState: RoundState = .idle
         public var inputState: InputState = .enabled
         public var roundData: RoundData?
-        public var songURL: URL?
         public var roundResult: RoundResult?
-        
     }
     
     public enum Action {
@@ -28,6 +26,8 @@ public struct GameReducer {
         case serverEvent(GameEvent)
         
         public enum Delegate {
+            case playMusic
+            case stopMusic
             case submitAnswer(String)
         }
     }
@@ -68,16 +68,12 @@ public struct GameReducer {
                 case .serverEvent(let event):
                     switch event {
                             
-                        case .preloadSong(let url):
-                            state.roundState = .loading(url)
-                            state.songURL = url
-                            return .none
                             
                         case .roundStarted(let data):
                             state.roundData = data
                             state.roundState = .playing
                             state.inputState = .enabled
-                            return .none
+                            return .send(.delegate(.playMusic))
                             
                         case .wrongAnswer:
                             state.inputState = .penalized
@@ -92,12 +88,11 @@ public struct GameReducer {
                             state.roundState = .result
                             state.roundResult = result
                             
-                            return .none
+                            return .send(.delegate(.stopMusic))
                             
                         case .nextRound:
                             state.roundData = nil
                             state.roundResult = nil
-                            state.songURL = nil
                             state.inputState = .enabled
                             state.roundState = .idle
                             state.selectedLetters = []
