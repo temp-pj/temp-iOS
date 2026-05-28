@@ -9,7 +9,7 @@ import Foundation
 
 public enum RoundState: Equatable {
     case idle
-    case loading(URL)
+    case loading
     case playing
     case result
     case finished
