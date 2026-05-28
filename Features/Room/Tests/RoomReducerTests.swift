@@ -82,10 +82,9 @@ final class RoomReducerTests: XCTestCase {
         
         // preload Song
         let songID = "1675478652"
-        continuation.yield(.preloadSong(songID))
+        continuation.yield(.preloadSong(PreloadSong(id: songID, startTime: 0, endTime: 30)))
         
         await store.receive(\.receive)
-        
         
         // 라운드 시작
         let roundData = RoundData.mock(roundNumber: 1, totalRounds: 100, wordCards: ["그", "대", "만", "있", "다", "면", "마", "라", "탕"], answerLength: 6, timeLimit: 3600)
@@ -268,7 +267,7 @@ final class RoomReducerTests: XCTestCase {
         await store.send(.onAppear)
         
         // 에픽하이 - 우산
-        continuation.yield(.preloadSong("1675478652"))
+        continuation.yield(.preloadSong(PreloadSong(id: "1675478652", startTime: 0, endTime: 30)))
         
         await store.receive(\.receive)
         XCTAssertEqual(fetchedID, "1675478652")
@@ -310,7 +309,6 @@ final class RoomReducerTests: XCTestCase {
         continuation.finish()
         await store.send(.onDisappear)
     }
-    
     
     func test_라운드_종료() async {
         let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)

@@ -11,4 +11,10 @@ public struct PreloadSong: Equatable, Sendable {
     public let id: String
     public let startTime: TimeInterval
     public let endTime: TimeInterval
+    
+    public init(id: String, startTime: TimeInterval, endTime: TimeInterval) {
+        self.id = id
+        self.startTime = startTime
+        self.endTime = endTime
+    }
 }
