@@ -96,7 +96,7 @@ public struct RoomReducer {
                             return .none
                             
                         case .preloadSong(let song):
-                            return .run { send in
+                            return .run { _ in
                                 // 추후에 여기서 startTime < endTime 방어 로직 구현
                                 try await audioClient.preload(song.id, song.startTime, song.endTime)
                             }
@@ -116,12 +116,12 @@ public struct RoomReducer {
                     return .send(.toServer(.game(.submitAnswer(answer))))
                     
                 case .game(.delegate(.playMusic)):
-                    return .run { send in
+                    return .run { _ in
                         try await audioClient.play()
                     }
                 
                 case .game(.delegate(.stopMusic)):
-                    return .run { send in
+                    return .run { _ in
                         try await audioClient.stop()
                     }
                     

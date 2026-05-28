@@ -67,8 +67,6 @@ public struct GameReducer {
                     
                 case .serverEvent(let event):
                     switch event {
-                            
-                            
                         case .roundStarted(let data):
                             state.roundData = data
                             state.roundState = .playing
