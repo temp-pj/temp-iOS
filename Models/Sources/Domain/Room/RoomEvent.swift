@@ -11,10 +11,10 @@ public enum RoomEvent: Equatable {
     case playerJoined(Player)
     case playerLeft(Player)
     case hostChanged(Player)
+    case kicked
     case serverConnectionChanged(ServerConnectionState)
-    case roomClosed(RoomCloseReason)
     case gameStarted
     case gameFinished(GameResult)
-    case preloadSong(PreloadSong)
+    case preloadSong(isrc: String, startTime: Int, roundNumber: Int)
     case game(GameEvent)
 }

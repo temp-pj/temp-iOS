@@ -1,13 +1,13 @@
 //
-//  RoundData.swift
+//  RoundStartPayload.swift
 //  Models
 //
-//  Created by 송지혁 on 5/3/26.
+//  Created by 송지혁 on 6/4/26.
 //
 
 import Foundation
 
-public struct RoundData: Equatable, Sendable, Decodable {
+public struct RoundStartPayload: Codable {
     public let roundNumber: Int
     public let totalRounds: Int
     public let answerLength: Int

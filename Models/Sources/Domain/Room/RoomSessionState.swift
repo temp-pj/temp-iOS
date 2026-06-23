@@ -5,7 +5,7 @@
 //  Created by 송지혁 on 5/13/26.
 //
 
-public enum RoomSessionState: Equatable {
+public enum RoomSessionState: String, Equatable {
     case waiting
     case playing
     case result

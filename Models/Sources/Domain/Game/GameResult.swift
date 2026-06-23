@@ -6,5 +6,11 @@
 //
 
 public struct GameResult: Equatable, Sendable, Decodable {
-    public init() { }
+    public let winner: String
+    public let scores: [String: Int]
+    
+    public init(winner: String, scores: [String: Int]) {
+        self.winner = winner
+        self.scores = scores
+    }
 }

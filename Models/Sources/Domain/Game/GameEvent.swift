@@ -10,6 +10,7 @@ import Foundation
 public enum GameEvent: Equatable, Sendable {
     case nextRound
     case roundStarted(RoundData)
-    case wrongAnswer
+    case countDown(Int)
+    case wrongAnswer(playerID: String, wrongAnswer: String)
     case roundEnded(RoundResult)
 }
