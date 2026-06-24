@@ -16,7 +16,7 @@ import XCTest
 final class GameReducerTests: XCTestCase {
     
     func test_answerLength_도달_시_자동_제출() async {
-        let roundData = RoundData(roundNumber: 1, totalRounds: 100, wordCards: ["그", "대", "만"], answerLength: 3, timeLimit: 10000)
+        let roundData = RoundData(roundNumber: 1, totalRounds: 100, letterCards: ["그", "대", "만"], answerLength: 3)
         let store = await TestStore(initialState: GameReducer.State(roundData: roundData), reducer: { GameReducer() })
         
         await store.send(.selectLetter(0)) {
@@ -39,7 +39,7 @@ final class GameReducerTests: XCTestCase {
     }
     
     func test_answerLength_초과_입력_무시() async {
-        let roundData = RoundData(roundNumber: 1, totalRounds: 100, wordCards: ["그", "대", "만"], answerLength: 3, timeLimit: 10000)
+        let roundData = RoundData(roundNumber: 1, totalRounds: 100, letterCards: ["그", "대", "만"], answerLength: 3)
         let store = await TestStore(
             initialState: GameReducer.State(selectedLetters: ["그", "대", "만"], roundData: roundData),
             reducer: { GameReducer() }
@@ -49,7 +49,7 @@ final class GameReducerTests: XCTestCase {
     }
     
     func test_inputState_penalized_일_때_selectLetter() async {
-        let roundData = RoundData(roundNumber: 1, totalRounds: 100, wordCards: ["그", "대", "만"], answerLength: 3, timeLimit: 10000)
+        let roundData = RoundData(roundNumber: 1, totalRounds: 100, letterCards: ["그", "대", "만"], answerLength: 3)
         
         let store = await TestStore(
             initialState: GameReducer.State(inputState: .penalized, roundData: roundData),
@@ -60,7 +60,7 @@ final class GameReducerTests: XCTestCase {
     }
     
     func test_inputState_submitting_일_떄_selectLetter() async {
-        let roundData = RoundData(roundNumber: 1, totalRounds: 100, wordCards: ["그", "대", "만"], answerLength: 3, timeLimit: 10000)
+        let roundData = RoundData(roundNumber: 1, totalRounds: 100, letterCards: ["그", "대", "만"], answerLength: 3)
         
         let store = await TestStore(
             initialState: GameReducer.State(inputState: .submitting, roundData: roundData),

@@ -43,9 +43,9 @@ public struct GameReducer {
             switch action {
                 case .selectLetter(let index):
                     guard state.inputState == .enabled else { return .none }
-                    guard let roundData = state.roundData, index >= 0, index < roundData.wordCards.count,
+                    guard let roundData = state.roundData, index >= 0, index < roundData.letterCards.count,
                             state.selectedLetters.count < roundData.answerLength else { return .none }
-                    let letter = roundData.wordCards[index]
+                    let letter = roundData.letterCards[index]
                     state.selectedLetters.append(letter)
                     
                     if state.selectedLetters.count == roundData.answerLength {

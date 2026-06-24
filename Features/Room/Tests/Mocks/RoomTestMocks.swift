@@ -12,8 +12,7 @@ extension RoundData {
     static func mock(roundNumber: Int, totalRounds: Int, wordCards: [String], answerLength: Int, timeLimit: TimeInterval) -> RoundData {
         return RoundData(roundNumber: roundNumber,
                          totalRounds: totalRounds,
-                         wordCards: wordCards,
-                         answerLength: answerLength,
-                         timeLimit: timeLimit)
+                         letterCards: wordCards,
+                         answerLength: answerLength)
     }
 }
