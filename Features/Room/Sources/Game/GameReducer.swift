@@ -15,6 +15,7 @@ public struct GameReducer {
         public var inputState: InputState = .enabled
         public var roundData: RoundData?
         public var roundResult: RoundResult?
+        public var remainingTime = 0
     }
     
     public enum Action {
@@ -94,6 +95,11 @@ public struct GameReducer {
                             state.inputState = .enabled
                             state.roundState = .idle
                             state.selectedLetters = []
+                            
+                            return .none
+                        
+                        case .countDown(let remaining):
+                            state.remainingTime = remaining
                             
                             return .none
                     }
