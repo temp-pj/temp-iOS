@@ -23,6 +23,7 @@ public struct RoomReducer {
         public var roomID: RoomID
         public var hostID: PlayerID
         public var players: [PlayerID: Player]
+        public var maxPlayers: Int = 8
         public var roomState: RoomSessionState = .waiting
         public var gameState: GameReducer.State?
         public var gameResult: GameResult?
@@ -90,9 +91,21 @@ public struct RoomReducer {
                             
                         case .serverConnectionChanged(let connectionState):
                             state.serverConnectionState = connectionState
+                            
+                            if case .connected(let roomConnectionInfo) = connectionState {
+                                state.roomID = roomConnectionInfo.roomID
+                                state.hostID = UUID(uuidString: roomConnectionInfo.hostID)!
+                                state.roomState = RoomSessionState(rawValue: roomConnectionInfo.roomState) ?? .waiting
+                                state.players = roomConnectionInfo.players.reduce(into: [:]) { dict, player in
+                                    dict[player.id] = player
+                                }
+                                state.maxPlayers = roomConnectionInfo.maxPlayers
+                                                                
+                            }
+                            
                             return .none
                             
-                        case .roomClosed(let reason):
+                        case .kicked:
                             return .none
                             
                         case .preloadSong(let song):
@@ -100,7 +113,7 @@ public struct RoomReducer {
                                 // 추후에 여기서 startTime < endTime 방어 로직 구현
                                 try await audioClient.preload(song.id, song.startTime, song.endTime)
                             }
-                            
+                    
                         case .game(let event):
                             return .send(.game(.serverEvent(event)))
                             
