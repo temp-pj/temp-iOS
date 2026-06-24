@@ -21,7 +21,16 @@ public extension RoomSessionClient {
         @Dependency(\.webSocketClient) var webSocketClient
         
         return RoomSessionClient { roomID in
-            guard let url = URL(string: "wss://\(roomID)") else { throw RoomSessionError.invalidURL  }
+            let host = ServerConfig.host
+            
+            let urlString: String
+            if let roomID {
+                urlString = "ws://\(host)/ws?room=\(roomID.uuidString.lowercased())"
+            } else {
+                urlString = "ws://\(host)/ws"
+            }
+            
+            guard let url = URL(string: urlString) else { throw RoomSessionError.invalidURL }
             try await webSocketClient.connect(url)
         } send: { request in
             let data = try RoomMessageCodec.encode(request)
