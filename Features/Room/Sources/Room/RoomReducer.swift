@@ -14,13 +14,13 @@ import Models
 @Reducer
 public struct RoomReducer {
     public typealias PlayerID = UUID
-    public typealias RoomID = UUID
+    public typealias RoomID = String
     
     public init() { }
     
     @ObservableState
     public struct State: Equatable {
-        public let roomID: RoomID
+        public var roomID: RoomID
         public var hostID: PlayerID
         public var players: [PlayerID: Player]
         public var roomState: RoomSessionState = .waiting
