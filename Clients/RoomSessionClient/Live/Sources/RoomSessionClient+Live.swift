@@ -24,8 +24,7 @@ public extension RoomSessionClient {
             guard let url = URL(string: "wss://\(roomID)") else { throw RoomSessionError.invalidURL  }
             try await webSocketClient.connect(url)
         } send: { request in
-            let message = WebSocketMessage.from(request)
-            let data = try JSONEncoder().encode(message)
+            let data = try RoomMessageCodec.encode(request)
             guard let jsonString = String(data: data, encoding: .utf8) else { throw RoomSessionError.encodingFailed }
             try await webSocketClient.send(jsonString)
             
@@ -35,7 +34,7 @@ public extension RoomSessionClient {
                     for await event in await webSocketClient.receive() {
                         switch event {
                             case .connected:
-                                continuation.yield(.serverConnectionChanged(.connected))
+                                continuation.yield(.serverConnectionChanged(.connecting))
                             case .disconnected(let reason):
                                 switch reason {
                                     case .normal:
@@ -45,13 +44,19 @@ public extension RoomSessionClient {
                                 }
                                 
                             case .message(let rawString):
+                                print("수신된 websocket 메시지: \(rawString)")
                                 if let data = rawString.data(using: .utf8) {
                                     do {
-                                        let message = try JSONDecoder().decode(WebSocketMessage.self, from: data)
-                                        let event = try message.toRoomEvent()
+                                        let type = try JSONDecoder().decode(TypePeek.self, from: data).type
+                                        
+                                        guard let event = try RoomMessageCodec.decode(data, type: type)
+                                                ?? SessionMessageCodec.decode(data, type: type) else { continue }
+                                        
                                         continuation.yield(event)
-                                    } catch { continue }
-                                    
+                                    } catch {
+                                        print("decode 실패: \(error) / 원문: \(rawString)")
+                                        continue
+                                    }
                                 }
                         }
                         
