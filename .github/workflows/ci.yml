@@ -29,5 +29,10 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
 
+      - name: Create Secrets.xcconfig
+        run: |
+          mkdir -p Configs
+          echo "SERVER_HOST = ${{ secrets.SERVER_HOST }}" > Configs/Secrets.xcconfig
+
       - name: Run CI
         run: bundle exec fastlane ci
