@@ -8,7 +8,6 @@
 import Foundation
 
 public enum GameEvent: Equatable, Sendable {
-    case nextRound
     case roundStarted(RoundData)
     case countDown(Int)
     case wrongAnswer(playerID: String, wrongAnswer: String)

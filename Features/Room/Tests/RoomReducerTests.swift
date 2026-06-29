@@ -139,18 +139,6 @@ final class RoomReducerTests: XCTestCase {
         
         XCTAssertEqual(didStop, true)
         
-        // 다음 라운드
-        continuation.yield(.game(.nextRound))
-        
-        await store.receive(\.receive)
-        await store.receive(\.game) {
-            $0.gameState?.roundState = .idle
-            $0.gameState?.inputState = .enabled
-            $0.gameState?.roundData = nil
-            $0.gameState?.roundResult = nil
-            $0.gameState?.selectedLetters = []
-        }
-        
         // 게임 종료
         let gameResult = GameResult(winner: "WINNER_ID", scores: [:])
         continuation.yield(.gameFinished(gameResult))
@@ -344,6 +332,34 @@ final class RoomReducerTests: XCTestCase {
         continuation.finish()
         await store.send(.onDisappear)
         
+    }
+    
+    func test_라운드_시작시_이전_라운드_상태_초기화() async {
+        let store = await TestStore(
+            initialState: GameReducer.State(
+                selectedLetters: ["마", "라", "탕", "있", "다", "면"],
+                roundState: .result,
+                inputState: .submitting,
+                roundResult: RoundResult(winnerId: "P2", correctAnswer: "마라탕있다면", scores: [:]),
+                remainingTime: 7
+            )
+        ) {
+            GameReducer()
+        }
+        
+        let nextRound = RoundData(roundNumber: 2, totalRounds: 100,
+                                  letterCards: ["타", "임", "캡", "슐"], answerLength: 4)
+        
+        await store.send(.serverEvent(.roundStarted(nextRound))) {
+            $0.selectedLetters = []
+            $0.roundResult = nil
+            $0.remainingTime = 0
+            $0.roundData = nextRound
+            $0.roundState = .playing
+            $0.inputState = .enabled
+        }
+        
+        await store.receive(\.delegate)
     }
     
     func test_게임_종료() async {

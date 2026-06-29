@@ -69,6 +69,9 @@ public struct GameReducer {
                 case .serverEvent(let event):
                     switch event {
                         case .roundStarted(let data):
+                            state.selectedLetters = []
+                            state.roundResult = nil
+                            state.remainingTime = 0
                             state.roundData = data
                             state.roundState = .playing
                             state.inputState = .enabled
@@ -89,14 +92,6 @@ public struct GameReducer {
                             
                             return .send(.delegate(.stopMusic))
                             
-                        case .nextRound:
-                            state.roundData = nil
-                            state.roundResult = nil
-                            state.inputState = .enabled
-                            state.roundState = .idle
-                            state.selectedLetters = []
-                            
-                            return .none
                         
                         case .countDown(let remaining):
                             state.remainingTime = remaining
