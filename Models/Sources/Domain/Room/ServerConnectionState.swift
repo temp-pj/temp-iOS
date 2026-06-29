@@ -7,7 +7,7 @@
 
 public enum ServerConnectionState: Equatable {
     case connecting
-    case connected
+    case connected(RoomConnectionInfo)
     case reconnecting
     case disconnected(DisconnectReason)
 }

@@ -7,4 +7,8 @@
 
 public struct SubmitAnswerPayload: Codable {
     let answer: String
+    
+    public init(answer: String) {
+        self.answer = answer
+    }
 }

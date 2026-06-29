@@ -14,15 +14,17 @@ import Models
 @Reducer
 public struct RoomReducer {
     public typealias PlayerID = UUID
-    public typealias RoomID = UUID
+    public typealias RoomID = String
     
     public init() { }
     
     @ObservableState
     public struct State: Equatable {
-        public let roomID: RoomID
+        public var roomID: RoomID
         public var hostID: PlayerID
+        public var timeLimit: Int = 30
         public var players: [PlayerID: Player]
+        public var maxPlayers: Int = 8
         public var roomState: RoomSessionState = .waiting
         public var gameState: GameReducer.State?
         public var gameResult: GameResult?
@@ -90,17 +92,31 @@ public struct RoomReducer {
                             
                         case .serverConnectionChanged(let connectionState):
                             state.serverConnectionState = connectionState
-                            return .none
                             
-                        case .roomClosed(let reason):
-                            return .none
-                            
-                        case .preloadSong(let song):
-                            return .run { _ in
-                                // 추후에 여기서 startTime < endTime 방어 로직 구현
-                                try await audioClient.preload(song.id, song.startTime, song.endTime)
+                            if case .connected(let roomConnectionInfo) = connectionState {
+                                state.roomID = roomConnectionInfo.roomID
+                                state.hostID = UUID(uuidString: roomConnectionInfo.hostID)!
+                                state.roomState = RoomSessionState(rawValue: roomConnectionInfo.roomState) ?? .waiting
+                                state.players = roomConnectionInfo.players.reduce(into: [:]) { dict, player in
+                                    dict[player.id] = player
+                                }
+                                state.maxPlayers = roomConnectionInfo.maxPlayers
+                                                                
                             }
                             
+                            return .none
+                            
+                        case .kicked:
+                            return .none
+                            
+                        case .preloadSong(let isrc, let startTime, let roundNumber):
+                            let timeLimit = TimeInterval(state.timeLimit)
+                            
+                            return .run { send in
+                                try await audioClient.preload(isrc, TimeInterval(startTime), timeLimit)
+                                await send(.toServer(.readyToPlay(roundNumber)))
+                            }
+                    
                         case .game(let event):
                             return .send(.game(.serverEvent(event)))
                             

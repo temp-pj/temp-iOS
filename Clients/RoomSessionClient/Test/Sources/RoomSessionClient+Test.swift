@@ -12,7 +12,7 @@ import Models
 
 public extension RoomSessionClient {
     static func mock(
-    connect: @escaping @Sendable (UUID) async throws -> Void = { _ in },
+    connect: @escaping @Sendable (UUID?) async throws -> Void = { _ in },
     send: @escaping @Sendable (RoomRequest) async throws -> Void = { _ in },
     roomEvents: @escaping @Sendable () -> AsyncStream<RoomEvent> = { .finished },
     disconnect: @escaping @Sendable () async throws -> Void = { }

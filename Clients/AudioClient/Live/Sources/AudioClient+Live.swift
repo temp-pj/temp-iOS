@@ -19,8 +19,9 @@ public extension AudioClient {
     static let live: AudioClient = {
         let player = ApplicationMusicPlayer.shared
         
-        return AudioClient { id, start, end in
-            var request = MusicCatalogResourceRequest<Song>(matching: \.id, equalTo: MusicItemID(id))
+        return AudioClient { isrc, start, timeLimit in
+            print("🎵 권한 상태:", MusicAuthorization.currentStatus)
+            var request = MusicCatalogResourceRequest<Song>(matching: \.isrc, equalTo: isrc)
             request.properties = [.albums]
             let response = try await request.response()
             
@@ -28,7 +29,7 @@ public extension AudioClient {
             if songs.isEmpty { throw AudioError.songNotFound }
             guard let song = songs.first else { throw AudioError.songNotFound }
             
-            let entry = MusicPlayer.Queue.Entry(song, startTime: start, endTime: end)
+            let entry = MusicPlayer.Queue.Entry(song, startTime: start, endTime: start + timeLimit)
             player.queue = ApplicationMusicPlayer.Queue([entry])
             
             try await player.prepareToPlay()

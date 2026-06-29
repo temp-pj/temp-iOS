@@ -3,6 +3,7 @@ import ClientAuthLive
 import ClientRoomSessionLive
 import ClientMusicEntitlementLive
 import ClientRoomLive
+import ClientWebSocketLive
 import ComposableArchitecture
 import FeatureRoom
 import Foundation
@@ -18,6 +19,7 @@ struct MGAMEApp: App {
         $0.roomClient = .live
         $0.roomSessionClient = .live
         $0.audioClient = .live
+        $0.webSocketClient = .live
     }
     
     var body: some Scene {

@@ -13,6 +13,7 @@ import Foundation
 import Models
 import XCTest
 
+// swiftlint:disable file_length
 final class RoomReducerTests: XCTestCase {
     func test_게임_한_사이클() async {
         let clock = TestClock()
@@ -29,7 +30,7 @@ final class RoomReducerTests: XCTestCase {
         var didPlay = false
         var didStop = false
         
-        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(),
+        let store = await TestStore(initialState: RoomReducer.State(roomID: "TEST_ROOM_ID",
                                                                     hostID: hostPlayer.id,
                                                                     players: [hostPlayer.id: hostPlayer],
                                                                     roomState: .waiting),
@@ -81,10 +82,11 @@ final class RoomReducerTests: XCTestCase {
         }
         
         // preload Song
-        let songID = "1675478652"
-        continuation.yield(.preloadSong(PreloadSong(id: songID, startTime: 0, endTime: 30)))
+        let isrc = "1675478652"
+        continuation.yield(.preloadSong(isrc: isrc, startTime: 0, roundNumber: 30))
         
         await store.receive(\.receive)
+        await store.receive(\.toServer) 
         
         // 라운드 시작
         let roundData = RoundData.mock(roundNumber: 1, totalRounds: 100, wordCards: ["그", "대", "만", "있", "다", "면", "마", "라", "탕"], answerLength: 6, timeLimit: 3600)
@@ -110,7 +112,7 @@ final class RoomReducerTests: XCTestCase {
         XCTAssertEqual(request, .game(.submitAnswer(wrongAnswer.joined())))
         
         // 오답 패널티
-        continuation.yield(.game(.wrongAnswer))
+        continuation.yield(.game(.wrongAnswer(playerID: player1.id.uuidString, wrongAnswer: wrongAnswer.joined())))
         await store.receive(\.receive)
         await store.receive(\.game) {
             $0.gameState?.inputState = .penalized
@@ -125,7 +127,7 @@ final class RoomReducerTests: XCTestCase {
         
         // 라운드 종료(정답 or 시간 초과)
         
-        let roundResult = RoundResult(winnerId: player2.id, correctAnswer: "그대만 있다면", scores: [:])
+        let roundResult = RoundResult(winnerId: player2.id.uuidString, correctAnswer: "그대만 있다면", scores: [:])
         
         continuation.yield(.game(.roundEnded(roundResult)))
         
@@ -138,20 +140,8 @@ final class RoomReducerTests: XCTestCase {
         
         XCTAssertEqual(didStop, true)
         
-        // 다음 라운드
-        continuation.yield(.game(.nextRound))
-        
-        await store.receive(\.receive)
-        await store.receive(\.game) {
-            $0.gameState?.roundState = .idle
-            $0.gameState?.inputState = .enabled
-            $0.gameState?.roundData = nil
-            $0.gameState?.roundResult = nil
-            $0.gameState?.selectedLetters = []
-        }
-        
         // 게임 종료
-        let gameResult = GameResult()
+        let gameResult = GameResult(winner: "WINNER_ID", scores: [:])
         continuation.yield(.gameFinished(gameResult))
         
         await store.receive(\.receive) {
@@ -168,7 +158,7 @@ final class RoomReducerTests: XCTestCase {
         
         let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
         
-        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(), hostID: UUID(), players: [:])) {
+        let store = await TestStore(initialState: RoomReducer.State(roomID: "TEST_ROOM_ID", hostID: UUID(), players: [:])) {
             RoomReducer()
         } withDependencies: {
             $0.roomSessionClient = .mock(roomEvents: { stream })
@@ -191,7 +181,7 @@ final class RoomReducerTests: XCTestCase {
         let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
         let player = Player(id: UUID())
         
-        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(), hostID: UUID(), players: [player.id: player]), reducer: { RoomReducer() }) {
+        let store = await TestStore(initialState: RoomReducer.State(roomID: "TEST_ROOM_ID", hostID: UUID(), players: [player.id: player]), reducer: { RoomReducer() }) {
             $0.roomSessionClient = .mock(roomEvents: { stream })
         }
         
@@ -212,7 +202,7 @@ final class RoomReducerTests: XCTestCase {
         let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
         let hostPlayer = Player(id: UUID())
         
-        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(), hostID: hostPlayer.id, players: [:]), reducer: { RoomReducer() }) {
+        let store = await TestStore(initialState: RoomReducer.State(roomID: "TEST_ROOM_ID", hostID: hostPlayer.id, players: [:]), reducer: { RoomReducer() }) {
             $0.roomSessionClient = .mock(roomEvents: { stream })
         }
         
@@ -235,7 +225,7 @@ final class RoomReducerTests: XCTestCase {
     func test_게임_시작() async {
         let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
         
-        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(), hostID: UUID(), players: [:])) {
+        let store = await TestStore(initialState: RoomReducer.State(roomID: "TEST_ROOM_ID", hostID: UUID(), players: [:])) {
             RoomReducer()
         } withDependencies: { $0.roomSessionClient = .mock(roomEvents: { stream }) }
         
@@ -257,7 +247,7 @@ final class RoomReducerTests: XCTestCase {
         let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
         var fetchedID: String?
         
-        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(), hostID: UUID(), players: [:], gameState: GameReducer.State())) {
+        let store = await TestStore(initialState: RoomReducer.State(roomID: "TEST_ROOM_ID", hostID: UUID(), players: [:], gameState: GameReducer.State())) {
             RoomReducer()
         } withDependencies: {
             $0.roomSessionClient = .mock(roomEvents: { stream })
@@ -267,10 +257,11 @@ final class RoomReducerTests: XCTestCase {
         await store.send(.onAppear)
         
         // 에픽하이 - 우산
-        continuation.yield(.preloadSong(PreloadSong(id: "1675478652", startTime: 0, endTime: 30)))
+        continuation.yield(.preloadSong(isrc: "TEST_ISRC", startTime: 0, roundNumber: 1))
         
         await store.receive(\.receive)
-        XCTAssertEqual(fetchedID, "1675478652")
+        XCTAssertEqual(fetchedID, "TEST_ISRC")
+        await store.receive(\.toServer)
         
         continuation.finish()
         await store.send(.onDisappear)
@@ -278,10 +269,10 @@ final class RoomReducerTests: XCTestCase {
     
     func test_라운드_시작() async {
         let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
-        let roundData = RoundData(roundNumber: 1, totalRounds: 100, wordCards: ["타", "임", "캡", "슐"], answerLength: 4, timeLimit: 1000)
+        let roundData = RoundData(roundNumber: 1, totalRounds: 100, letterCards: ["타", "임", "캡", "슐"], answerLength: 4)
         var didPlay = false
         
-        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(),
+        let store = await TestStore(initialState: RoomReducer.State(roomID: "TEST_ROOM_ID",
                                                                     hostID: UUID(),
                                                                     players: [:],
                                                                     roomState: .playing,
@@ -312,10 +303,10 @@ final class RoomReducerTests: XCTestCase {
     
     func test_라운드_종료() async {
         let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
-        let roundResult = RoundResult(winnerId: UUID(), correctAnswer: "편지", scores: [:])
+        let roundResult = RoundResult(winnerId: "WINNER_ID", correctAnswer: "편지", scores: [:])
         var didStop = false
         
-        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(),
+        let store = await TestStore(initialState: RoomReducer.State(roomID: "TEST_ROOM_ID",
                                                                     hostID: UUID(),
                                                                     players: [:],
                                                                     roomState: .playing,
@@ -344,10 +335,38 @@ final class RoomReducerTests: XCTestCase {
         
     }
     
+    func test_라운드_시작시_이전_라운드_상태_초기화() async {
+        let store = await TestStore(
+            initialState: GameReducer.State(
+                selectedLetters: ["마", "라", "탕", "있", "다", "면"],
+                roundState: .result,
+                inputState: .submitting,
+                roundResult: RoundResult(winnerId: "P2", correctAnswer: "마라탕있다면", scores: [:]),
+                remainingTime: 7
+            )
+        ) {
+            GameReducer()
+        }
+        
+        let nextRound = RoundData(roundNumber: 2, totalRounds: 100,
+                                  letterCards: ["타", "임", "캡", "슐"], answerLength: 4)
+        
+        await store.send(.serverEvent(.roundStarted(nextRound))) {
+            $0.selectedLetters = []
+            $0.roundResult = nil
+            $0.remainingTime = 0
+            $0.roundData = nextRound
+            $0.roundState = .playing
+            $0.inputState = .enabled
+        }
+        
+        await store.receive(\.delegate)
+    }
+    
     func test_게임_종료() async {
         let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
         
-        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(),
+        let store = await TestStore(initialState: RoomReducer.State(roomID: "TEST_ROOM_ID",
                                                                     hostID: UUID(),
                                                                     players: [:],
                                                                     roomState: .playing,
@@ -356,7 +375,7 @@ final class RoomReducerTests: XCTestCase {
         }
         
         await store.send(.onAppear)
-        let gameResult = GameResult()
+        let gameResult = GameResult(winner: "WINNER_ID", scores: [:])
         continuation.yield(.gameFinished(gameResult))
         
         await store.receive(\.receive) {
@@ -374,7 +393,7 @@ final class RoomReducerTests: XCTestCase {
         let (stream, continuation) = AsyncStream.makeStream(of: RoomEvent.self)
         var sentRequest: RoomRequest?
         
-        let store = await TestStore(initialState: RoomReducer.State(roomID: UUID(),
+        let store = await TestStore(initialState: RoomReducer.State(roomID: "TEST_ROOM_ID",
                                                                     hostID: UUID(),
                                                                     players: [:],
                                                                     roomState: .playing,

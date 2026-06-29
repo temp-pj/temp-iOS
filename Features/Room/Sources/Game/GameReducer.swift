@@ -15,6 +15,7 @@ public struct GameReducer {
         public var inputState: InputState = .enabled
         public var roundData: RoundData?
         public var roundResult: RoundResult?
+        public var remainingTime = 0
     }
     
     public enum Action {
@@ -43,9 +44,9 @@ public struct GameReducer {
             switch action {
                 case .selectLetter(let index):
                     guard state.inputState == .enabled else { return .none }
-                    guard let roundData = state.roundData, index >= 0, index < roundData.wordCards.count,
+                    guard let roundData = state.roundData, index >= 0, index < roundData.letterCards.count,
                             state.selectedLetters.count < roundData.answerLength else { return .none }
-                    let letter = roundData.wordCards[index]
+                    let letter = roundData.letterCards[index]
                     state.selectedLetters.append(letter)
                     
                     if state.selectedLetters.count == roundData.answerLength {
@@ -68,6 +69,9 @@ public struct GameReducer {
                 case .serverEvent(let event):
                     switch event {
                         case .roundStarted(let data):
+                            state.selectedLetters = []
+                            state.roundResult = nil
+                            state.remainingTime = 0
                             state.roundData = data
                             state.roundState = .playing
                             state.inputState = .enabled
@@ -87,13 +91,9 @@ public struct GameReducer {
                             state.roundResult = result
                             
                             return .send(.delegate(.stopMusic))
-                            
-                        case .nextRound:
-                            state.roundData = nil
-                            state.roundResult = nil
-                            state.inputState = .enabled
-                            state.roundState = .idle
-                            state.selectedLetters = []
+                        
+                        case .countDown(let remaining):
+                            state.remainingTime = remaining
                             
                             return .none
                     }

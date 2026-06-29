@@ -7,12 +7,12 @@
 
 import Foundation
 
-public struct RoundResult: Equatable, Sendable, Decodable {
-    public let winnerId: UUID?
+public struct RoundResult: Equatable, Sendable, Codable {
+    public let winnerId: String?
     public let correctAnswer: String
-    public let scores: [UUID: Int]
+    public let scores: [String: Int]
     
-    public init(winnerId: UUID?, correctAnswer: String, scores: [UUID: Int]) {
+    public init(winnerId: String?, correctAnswer: String, scores: [String: Int]) {
         self.winnerId = winnerId
         self.correctAnswer = correctAnswer
         self.scores = scores

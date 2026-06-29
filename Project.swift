@@ -307,7 +307,11 @@ let project = Project(
                             "UIColorName": "",
                             "UIImageName": "",
                         ],
-                        "NSAppleMusicUsageDescription": "음악 퀴즈를 위해 Apple Music 접근이 필요합니다."
+                        "NSAppleMusicUsageDescription": "음악 퀴즈를 위해 Apple Music 접근이 필요합니다.",
+                        "NSAppTransportSecurity": [
+                            "NSAllowsArbitraryLoads": true
+                        ],
+                        "SERVER_HOST": "$(SERVER_HOST)"
                     ]
                 ),
                 sources: ["M_GAME/Sources/**"],
@@ -323,7 +327,13 @@ let project = Project(
                     .target(name: "ClientRoomSessionLive"),
                     .target(name: "ClientWebSocketLive"),
                     .external(name: "ComposableArchitecture")
-                ]
+                ],
+                settings: .settings(
+                    configurations: [
+                        .debug(name: "Debug", xcconfig: "Configs/Secrets.xcconfig"),
+                        .release(name: "Release", xcconfig: "Configs/Secrets.xcconfig"),
+                    ]
+                    )
             ),
     ]
 )
