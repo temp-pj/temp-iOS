@@ -13,6 +13,7 @@ import Foundation
 import Models
 import XCTest
 
+// swiftlint:disable file_length
 final class RoomReducerTests: XCTestCase {
     func test_게임_한_사이클() async {
         let clock = TestClock()

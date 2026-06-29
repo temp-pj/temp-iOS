@@ -91,7 +91,6 @@ public struct GameReducer {
                             state.roundResult = result
                             
                             return .send(.delegate(.stopMusic))
-                            
                         
                         case .countDown(let remaining):
                             state.remainingTime = remaining
